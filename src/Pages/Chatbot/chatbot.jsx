@@ -420,7 +420,7 @@ const getAvatarColor = (initials) => {
       phoneNumber = phoneNumber.slice(2);
     }
     try {
-      const response = await axios.post(
+      const response = await axiosInstance.post(
         'https://whatsappbotserver.azurewebsites.net/send-message',
         {
           phoneNumbers: [phoneNumber],
@@ -586,7 +586,7 @@ const getAvatarColor = (initials) => {
             phoneNumber = phoneNumber.slice(2);
           }
       
-          return axios.post(
+          return axiosInstance.post(
             'https://whatsappbotserver.azurewebsites.net/send-message',
             {
               phoneNumbers: [phoneNumber],
@@ -603,7 +603,7 @@ const getAvatarColor = (initials) => {
         if (phoneNumber.startsWith("91")) {
           phoneNumber = phoneNumber.slice(2);
         }
-        await axios.post(
+        await axiosInstance.post(
           'https://whatsappbotserver.azurewebsites.net/send-message',
           {
             phoneNumbers: [phoneNumber],
