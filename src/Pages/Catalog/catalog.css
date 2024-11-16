@@ -1,201 +1,104 @@
-:root {
-  --column-bg-color: #d1eaf0ec; /* Define your column background color here */
+.bp-catalog h1 {
+  font-size: 36px;
+  font-weight: 600;
+  font-family: sans-serif;
+  margin-bottom: 20px;
 }
 
-h1 {
-    font-size: 36px;
-    font-weight: 600;
-    font-family: sans-serif;
-    margin-bottom: 20px;
-  }
-  
-  table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  
-  th, td {
-    padding: 15px;
-    text-align: left;
-    border: 1px solid var(--column-bg-color);
-  }
-  
-  th {
-    background-color: var(--column-bg-color);
-  }
-  
-  td input {
-    width: 90%;
-    padding: 5px;
-    border: 1px solid var(--column-bg-color);
-    border-radius: 4px;
-  }
-  
-  button {
-    background-color: #4CAF50; /* Green */
-    color: white;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-
-  body {
-    background: linear-gradient(to right, var(--column-bg-color), #a0e0e0); /* Adjust colors as needed */
-    margin: 0;
-    padding: 0;
-    font-family: sans-serif;
+.bp-catalog table {
+  width: 100%;
+  border-collapse: collapse;
 }
 
-  .submit-container {
-    display: flex;
-    justify-content: center; /* Center the button horizontally */
-    margin-top: 20px; /* Add space above the button */
-}
-
-.column-bg {
-  background-color: var(--column-bg-color);
-}
-  
-  .submit-button {
-    position: relative; /* Remove absolute positioning for better flow */
-    width: 120px;
-    height: 50px;
-    border-radius: 25px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    font-size: 18px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    margin-top: 20px;
-}
-
-.submit-button:hover {
-    background-color: #45a049;
-    transform: scale(1.05); /* Slight zoom on hover for effect */
-}
-
-.submit-button:active {
-    background-color: #3e8e41;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    transform: scale(1.02);
-}
-
-
-  .add-row-button {
-    position: fixed; /* Fixes the button to the viewport */
-    bottom: 20px; /* Distance from the bottom */
-    right: 20px; /* Distance from the right */
-    width: 50px; /* Width of the button */
-    height: 50px; /* Height of the button */
-    border-radius: 50%; /* Makes it circular */
-    background-color: #4CAF50; /* Green background */
-    color: white; /* White text color */
-    border: none; /* No border */
-    font-size: 24px; /* Font size for the plus sign */
-    display: flex; /* Center the content */
-    align-items: center; /* Center vertically */
-    justify-content: center; /* Center horizontally */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow effect */
-    cursor: pointer; /* Pointer cursor on hover */
-    transition: background-color 0.3s ease; /* Transition effect */
-  }
-  
-  .add-row-button:hover {
-    background-color: #45a049; /* Darker green on hover */
-  }
-  
-  
-  .btn {
-    display: flex;
-    align-items: center;
-    background: none;/* Assuming gray is #A9A9A9 */
-    height: 48px;
-    padding: 0 15px 0 15px;
-    letter-spacing: .25px;
-    border-radius: 24px;
-    cursor: pointer;
-  }
-  
-  .btn:focus {
-    outline: none;
-  }
-  
-  .btn-delete {
-    font-size: 16px;
-    color: red;
-  }
-  
-  .btn-delete:hover {
-    background-color: rgba(255, 0, 0, 0.13); /* lighten(red, 48%) */
-  }
-  
-  .duplicate-input {
-    border: 2px solid rgb(179, 54, 54); /* Red border for duplicates */
-}
-
-.duplicate-input:focus {
-  border-color: rgb(179, 54, 54) !important; /* Ensures border stays red even on focus */
-  outline: none; /* Optional: remove the default focus outline */
-}
-
-.copy-text-box {
-  position: absolute;
-  top: 90px;
-  right: 20px;
-  font-size: 14px;
-  font-weight: 500;
-  color: #333;
-  background-color: #f0f0f0;
+.bp-catalog th, .bp-catalog td {
   padding: 15px;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  cursor: pointer; /* Hand cursor on hover */
-  text-align: center;
-  width: 120px; /* Width of the box */
-  user-select: none; /* Prevents text selection */
-  transition: background-color 0.3s ease;
+  text-align: left;
+  border: 1px solid #ddd;
 }
 
-.input-catalogid {
-  position: absolute;
-  top: 90px;
-  left: 10px;
-  font-size: 14px;
-  font-weight: 500;
-  color: #333;
-  padding: 15px;
-  text-align: center;
-  user-select: none; /* Prevents text selection */
-  transition: background-color 0.3s ease;
+.bp-catalog th {
+  background-color: #f4f4f4;
 }
 
-.popup {
-  transform: scale(1);
-  transition: transform 0.3s ease;
+.bp-catalog td input {
+  width: 90%;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
 
-.popup-enter {
-  transform: scale(1); /* Fully visible at full scale */
-}
-
-.popup-exit {
-  transform: scale(0); /* Scales down to zero when exiting */
-}
-
-
-.copy-text-box:hover {
-  background-color: #e0e0e0;
-}
-
-
-.copy-text-box.copied {
-  background-color: green;
+.bp-catalog button {
+  background-color: #4CAF50; /* Green */
   color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.bp-catalog .submit-button {
+  position: absolute;
+  top: 95px;
+  right: 15px;
+  width: 90px;
+  height: 45px;
+  border-radius: 15px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.bp-catalog .add-row-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.bp-catalog .add-row-button:hover {
+  background-color: #45a049;
+}
+
+.bp-catalog .btn {
+  display: flex;
+  align-items: center;
+  background: none;
+  height: 48px;
+  padding: 0 15px;
+  letter-spacing: 0.25px;
+  border-radius: 24px;
+  cursor: pointer;
+}
+
+.bp-catalog .btn:focus {
+  outline: none;
+}
+
+.bp-catalog .btn-delete {
+  font-size: 16px;
+  color: red;
+}
+
+.bp-catalog .btn-delete:hover {
+  background-color: rgba(255, 0, 0, 0.13);
 }
