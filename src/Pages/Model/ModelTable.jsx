@@ -41,7 +41,7 @@ const Models = () => {
         setSelectedModel(model);
         setLoading(true);
         try {
-            const response = await axiosInstance.get(`${djangoURL}/dynamic-model-data/${model.model_name}/`);
+            const response = await axiosInstance.get(`${fastURL}/dynamic-models/${model.model_name}/`);
             setModelData(response.data);
         } catch (error) {
             console.error('Error fetching model data:', error);
