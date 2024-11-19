@@ -11,7 +11,7 @@ import uploadToBlob from '../../../azureUpload';
 import { MentionTextArea,convertMentionsForBackend, convertMentionsForFrontend } from '../../NewFlow/MentionTextArea';
 import { base } from 'framer-motion/client';
 import { Brightness4 } from '@mui/icons-material';
-// import {NodeCache} from 'node-cache';
+// import { NodeCache } from 'node-cache';
 
 const getTenantIdFromUrl = () => {
   // Example: Extract tenant_id from "/3/home"
@@ -84,6 +84,21 @@ const BroadcastPage = () => {
     );
     setFilteredTemplates(filtered);
   };
+
+  function calculateLocalStorageUsage() {
+    let totalBytes = 0;
+
+    for (let key in localStorage) {
+        if (localStorage.hasOwnProperty(key)) {
+            const keyBytes = key.length + localStorage.getItem(key).length;
+            totalBytes += keyBytes;
+        }
+    }
+
+    console.log(`Total localStorage usage: ${(totalBytes / 1024).toFixed(2)} KB`);
+    return totalBytes;
+}
+
  
 
     useEffect(() => {
@@ -106,6 +121,7 @@ const BroadcastPage = () => {
       };
   
       fetchBusinessPhoneId()
+      // calculateLocalStorageUsage();
     }, [tenantId]);
   
 
@@ -205,14 +221,10 @@ const BroadcastPage = () => {
     setIsSendingBroadcast(true);
     
     try {
-      // Create a new group and save it to local storage
-      const newGroup = {
-        id: uuidv4(),
-        name: groupName || `Broadcast Group ${new Date().toISOString()}`,
-        members: selectedPhones,
-      };
       // saveGroupToLocalStorage(newGroup);
-      console.log("Selected BCGroups: ", broadcastGroup)
+      console.log("Selected BCGroups: ", selectedBCGroups)
+      let bg_id;
+      let bg_name;
 
       const phoneNumbers = [
         ...selectedPhones.map((contact) => {
@@ -220,14 +232,15 @@ const BroadcastPage = () => {
       }),
       ...selectedBCGroups.flatMap((bgId) => {
         const bcg = broadcastGroup.find((bg) => bg.id === bgId);
-        console.log("huaghab: ", bcg)
-        console.log("hufguga: ", bcg.contacts.map(phone => parseInt(phone)))
-        return bcg.contacts.map(phone => parseInt(phone.phone))
+        bg_id = bcg.id
+        bg_name = bcg.name
+        return bcg.members.map(member => parseInt(member.phone))
       }) 
     ].filter(Boolean)
   
       const payload = {
-        bg_id: newGroup.id,
+        bg_id: bg_id,
+        bg_name: bg_name,
         template: {
           id: selectedTemplate.id,
           name: selectedTemplate?.name || "under_name",
@@ -236,7 +249,7 @@ const BroadcastPage = () => {
         phoneNumbers: phoneNumbers,
       };
 
-      console.log("{Patload: ", payload)
+      console.log("Payload: ", payload)
   
       // Send the broadcast message
       const response = await axios.post(`${whatsappURL}/send-template/`, payload,
@@ -251,6 +264,7 @@ const BroadcastPage = () => {
         console.log("Broadcast sent successfully");
         alert("Broadcast message sent successfully!");
         handleCloseBroadcastPopup();
+
       } else {
         throw new Error("Failed to send broadcast");
       }
@@ -260,6 +274,7 @@ const BroadcastPage = () => {
       console.error("Error sending broadcast:", error);
       alert("Failed to send broadcast message. Please try again.");
     } finally {
+      
       setIsSendingBroadcast(false);
     }
   };
@@ -268,12 +283,16 @@ const BroadcastPage = () => {
     console.log("selected phones for groups: ", selectedPhones)
     console.log("group name: ", groupName)
     try{
+      const members = selectedPhones.map(contact => ({
+        phone: contact.phone,
+        name: contact.name
+      }))
       const payload = {
-        contact_id : selectedPhones.map(contact => contact.id),
-        bgid : uuidv4(),
-        name: groupName 
+        members : members,
+        id : uuidv4(),
+        name: groupName
       };
-      const response = await axiosInstance.patch(`${fastURL}/contacts/`, payload,
+      const response = await axiosInstance.post(`${fastURL}/broadcast-groups/`, payload,
         {
           headers: {
             'X-Tenant-ID': tenantId
@@ -285,14 +304,8 @@ const BroadcastPage = () => {
         console.log("Group created successfully");
 
         alert("Contacts added to group successfully!");
-
-        const newGroup = {
-          id: payload.bgid, // Map bgid to id
-          name: payload.name, // Use the same name
-          contacts: selectedPhones, // Map contact_id to contacts
-        };
-  
-        setBroadcastGroup((prevGroups) => [...prevGroups, newGroup]);
+        console.log("Payload: ", payload)
+        setBroadcastGroup((prevGroups) => [...prevGroups, payload]);
   
         // Clear selected phones after creating the group
         setSelectedPhones([]);
@@ -487,23 +500,26 @@ const BroadcastPage = () => {
       console.log("Formatted History: ", formattedHistory)
       setBroadcastHistory(formattedHistory);
       setFilteredBroadcastHistory(formattedHistory);
-      // const cacheKey = tenantId
-      // messageCache.set(cacheKey, formattedHistory)
+      const cacheKey = tenantId
+      // localStorage.setItem(cacheKey, JSON.stringify(formattedHistory))
+      // console.log("Local Storage: ", localStorage)
     } catch (error) {
       console.error('Error fetching broadcast history:', error);
     }
   };
 
   useEffect(() => {
-  //   const cacheKey = tenantId
-  //   const history = messageCache.get(cacheKey)
-  //   if(history){
-  //     setBroadcastHistory(history);
-  //     setFilteredBroadcastHistory(history);
-  //   }
-  //   else{
-  //     fetchBroadcastHistory()
-  //   }
+    // const cacheKey = tenantId
+    // let history = localStorage.getItem(cacheKey)
+    // history = JSON.parse(history)
+    // // console.log("Local Storage: ", JSON.parse(history))
+    // if(history){
+    //   setBroadcastHistory(history);
+    //   setFilteredBroadcastHistory(history);
+    // }
+    // else{
+    //   fetchBroadcastHistory()
+    // }
   fetchBroadcastHistory()
   },[])
 
@@ -536,33 +552,32 @@ const BroadcastPage = () => {
     const groups = {};
     let idCounter = 1;
   
-    data.forEach(contact => {
-      const groupName = contact.bg_name
+    data.forEach(group => {
+      const groupName = group.name
   
-      if(!groupName) return;
       // Initialize the group if it doesn't exist
-      console.log("DOING GROUP: ", groupName)
+      // console.log("DOING GROUP: ", groupName)
       if (!groups[groupName]) {
         groups[groupName] = {
-          id: idCounter++, // Increment ID for each new group
+          id: group.id, // Increment ID for each new group
           name: groupName,
-          contacts: []
+          contacts: group.members
         };
       }
-      groups[groupName].contacts.push(contact || "No Contact");
     });
   
     // Convert the groups object into an array and join contact names with commas
     return Object.values(groups).map(group => ({
       id: group.id,
       name: group.name || null,
-      contacts: group.contacts
+      members: group.contacts
     }));
   };
 
 
   const fetchContacts = async () => {
     try {
+      const broadcastGroupPromise = axiosInstance.get(`${fastURL}/broadcast-groups/`)
       const response = await axiosInstance.get(`${fastURL}/contacts/`, {
         headers: {
           token: localStorage.getItem('token'),
@@ -577,16 +592,18 @@ const BroadcastPage = () => {
         hasNewMessage: contact.hasNewMessage || false
       }));
       setContacts(sortContacts(processedContacts));
-      const formattedGroups = await formatGroups(response.data)
+
+      const broadcastGroupResponse = await broadcastGroupPromise
+      console.log("Broadcast Group Response: ", broadcastGroupResponse.data)
+      const formattedGroups = await formatGroups(broadcastGroupResponse.data)
       console.log("Formatted groups: ", formattedGroups)
       setBroadcastGroup(formattedGroups)
     } catch (error) {
       console.error("Error fetching contacts data:", error);
     }
   };
-
   useEffect(() => {
-    fetchContacts(broadcastGroup);
+    fetchContacts();
   }, []);
 
 
@@ -616,17 +633,16 @@ const BroadcastPage = () => {
   // };
 
   const formatBroadcastHistory = (groupedStatuses) => {
-
     return Object.entries(groupedStatuses).map(([broadcastGroup, statuses]) => ({
-          id: broadcastGroup,
-          name: `Broadcast Group ${broadcastGroup}`,
-          sent: statuses.sent,
-          delivered: statuses.delivered,
-          read: statuses.read,
-          replied: statuses.replied,
-          failed: statuses.failed,
-          status: statuses.delivered ? 'Completed' : 'In Progress'
-        }));
+      id: broadcastGroup,
+      name: statuses.name || `Broadcast Group ${broadcastGroup}`,
+      sent: statuses.sent,
+      delivered: statuses.delivered,
+      read: statuses.read,
+      replied: statuses.replied,
+      failed: statuses.failed,
+      status: statuses.delivered ? 'Completed' : 'In Progress'
+    }));
   }
 
   const handlePhoneSelection = (contact) => {
@@ -814,20 +830,20 @@ const BroadcastPage = () => {
         ))}
         {broadcastGroup.map(bg =>{
           console.log("Broadcast group:", bg); // Logs the entire group object
-          console.log("Contacts for group:", bg.contacts); // Specifically logs the contacts field
+          console.log("Contacts for group:", bg.members); // Specifically logs the contacts field
         
         return (
           <div key={bg.id} className="cb-broadcast-contact-item">
             <input
               type="checkbox"
               id={`broadcast-group-${bg.id}`}
-              checked={selectedBCGroups.includes(bg.id)}
+              checked={selectedBCGroups.includes(bg.id)} //selectedBCGroups is an array of int
               onChange={() => handleBCGroupSelection(bg.id)}
             />
             <label htmlFor={`broadcast-group-${bg.id}`}>
               <span className="cb-broadcast-contact-name">{bg.name}</span>
               <span className="cb-broadcast-contact-phone">
-              ({bg.contacts.map((contact) => contact.name).join(', ')})</span>
+              ({bg.members.map((contact) => contact.name).join(', ')})</span>
             </label>
           </div>
         )})}
@@ -855,6 +871,7 @@ const BroadcastPage = () => {
       value={groupName}
       onChange={(e) => setGroupName(e.target.value)}
       placeholder="Enter group name"
+
       className="cb-group-name-input"
     />
       <h1>Select Contacts:</h1>
@@ -878,14 +895,13 @@ const BroadcastPage = () => {
     <div className="cb-broadcast-contact-list">
       {broadcastGroup.map(bg =>{
         console.log("Broadcast group:", bg); // Logs the entire group object
-        console.log("Contacts for group:", bg.contacts); // Specifically logs the contacts field
       
       return (
         <div key={bg.id} className="cb-broadcast-contact-item">
           <label htmlFor={`broadcast-group-${bg.id}`}>
             <span className="cb-broadcast-contact-name">{bg.name}</span>
             <span className="cb-broadcast-contact-phone">
-            ({bg.contacts.map((contact) => contact.name).join(', ')})</span>
+            ({bg.members.map((contact) => contact.name).join(', ')})</span>
           </label>
         </div>
       )})}
@@ -990,7 +1006,7 @@ const BroadcastPage = () => {
         </div>
       )}
       </div>
-       {showTemplatePopup && (
+      {showTemplatePopup && (
         <div className="bp-popup-overlay">
           <div className="bp-popup bp-template-popup">
             <h2>{isEditing ? 'Edit' : 'Create'} WhatsApp Template Message</h2>
