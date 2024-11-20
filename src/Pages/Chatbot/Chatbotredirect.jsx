@@ -15,19 +15,20 @@ const Chatbotredirect = () => {
         const urlParams = new URLSearchParams(window.location.search);
         const code = urlParams.get('code');
         console.log("Here is the code",code);
+        
+        const tenantID = JSON.parse(localStorage.getItem('tenant_id'));
         if (code) {
           // Send the auth code to the backend
           const response = await axios.post(
             `https://8twdg37p-8080.inc1.devtunnels.ms/login-flow`,
-            { code },  // This is the body of the request
-            { headers: { 'X-Tenant-Id': 'bBuxsKd' } }  // This is the headers object
+            { code },
+            { headers: { 'X-Tenant-Id': tenantID } }
           );
 
           // Handle the response (you can save token or do other logic here)
           console.log('Backend response:', response.data);
 
-          // Get tenantID from local storage and redirect
-          const tenantID = JSON.parse(localStorage.getItem('tenant_id')); // Replace with your actual local storage key
+          // Get tenantID from local storage and redirect // Replace with your actual local storage key
 
           const timer = setInterval(() => {
             setProgress((prevProgress) => {

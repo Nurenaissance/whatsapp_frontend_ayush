@@ -79,7 +79,7 @@ const [passwordsMatch, setPasswordsMatch] = useState(true); // To track if passw
     
         const response = await axios.post(`${whatsappURL}/send-template/`, payload,{
           headers: {
-            'X-Tenant-Id': 'ai' //keep this ll
+            'X-Tenant-Id': 'ai' //keep this ai
           }
         }
         );
