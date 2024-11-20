@@ -228,7 +228,8 @@ const Catalog = () => {
 
   return (
     <div className="bp-catalog absolute right-0">
-
+      {tableData &&  tableData.length > 0 ? (
+        <>
       {/* Division: Catalog Management Section */}
       <div className="catalog-management-section flex flex-col lg:flex-row items-start lg:items-center justify-between p-4 rounded-lg gap-4">
 
@@ -436,6 +437,12 @@ const Catalog = () => {
       {isSubmitting? 'Submitting...': 'Submit'}
     </button>
       </div>
+      </>
+      ) : (
+        <div className="flex items-center justify-center h-screen">
+          <p className="text-gray-500 text-lg">No data available.</p>
+        </div>
+      )}
 
       {/* Add Row Button */}
       <button 

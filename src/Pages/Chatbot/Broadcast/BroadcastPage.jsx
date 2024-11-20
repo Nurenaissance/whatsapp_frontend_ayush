@@ -26,7 +26,7 @@ const getTenantIdFromUrl = () => {
 // const messageCache = new NodeCache({ stdTTL: 600 });
 
 const initial_bg = [
-  {id: 1, name: 'first group', contacts: [919548265904, 919864436756]}
+  
 ]
 
 const BroadcastPage = () => {
@@ -814,7 +814,8 @@ const BroadcastPage = () => {
       </div>
       <div className="cb-broadcast-contact-list">
         <h3>Select Contacts:</h3>
-        {contacts.map(contact => (
+        {contacts && contacts.length > 0  ?
+        contacts.map(contact => (
           <div key={contact.id} className="cb-broadcast-contact-item">
             <input
               type="checkbox"
@@ -827,7 +828,7 @@ const BroadcastPage = () => {
               <span className="cb-broadcast-contact-phone">({contact.phone})</span>
             </label>
           </div>
-        ))}
+        )) : '(No Contact Available)'}
         {broadcastGroup.map(bg =>{
           console.log("Broadcast group:", bg); // Logs the entire group object
           console.log("Contacts for group:", bg.members); // Specifically logs the contacts field
@@ -876,24 +877,26 @@ const BroadcastPage = () => {
     />
       <h1>Select Contacts:</h1>
     <div className="cb-broadcast-contact-list">
-      {contacts.map(contact => (
-        <div key={contact.id} className="cb-broadcast-contact-item">
-          <input
-            type="checkbox"
-            id={`contact-${contact.id}`}
-            checked={selectedPhones.includes(contact)}
-            onChange={() => handlePhoneSelection(contact)}
-          />
-          <label htmlFor={`contact-${contact.id}`}>
-            <span className="cb-broadcast-contact-name">{contact.name}</span>
-            <span className="cb-broadcast-contact-phone">({contact.phone})</span>
-          </label>
-        </div>
-      ))}
+    {contacts && contacts.length > 0  ?
+        contacts.map(contact => (
+          <div key={contact.id} className="cb-broadcast-contact-item">
+            <input
+              type="checkbox"
+              id={`contact-${contact.id}`}
+              checked={selectedPhones.includes(contact)}
+              onChange={() => handlePhoneSelection(contact)}
+            />
+            <label htmlFor={`contact-${contact.id}`}>
+              <span className="cb-broadcast-contact-name">{contact.name}</span>
+              <span className="cb-broadcast-contact-phone">({contact.phone})</span>
+            </label>
+          </div>
+        )) : '(No Contact Available)'}
       </div>
       <h2 style={{textAlign: 'left'}} >Groups:</h2>
     <div className="cb-broadcast-contact-list">
-      {broadcastGroup.map(bg =>{
+      {broadcastGroup && broadcastGroup.length > 0 ?
+      broadcastGroup.map(bg =>{
         console.log("Broadcast group:", bg); // Logs the entire group object
       
       return (
@@ -901,10 +904,14 @@ const BroadcastPage = () => {
           <label htmlFor={`broadcast-group-${bg.id}`}>
             <span className="cb-broadcast-contact-name">{bg.name}</span>
             <span className="cb-broadcast-contact-phone">
-            ({bg.members.map((contact) => contact.name).join(', ')})</span>
+              
+  {bg.members && bg.members.length > 0
+    ? `(${bg.members.map((contact) => contact.name).join(', ')})`
+    : '(No contacts available)'}
+            </span>
           </label>
         </div>
-      )})}
+      )}) : 'No Group Available'}
     </div>
     <div className="cb-broadcast-actions">
       <button onClick={handleCloseGroupPopup} className="cb-cancel-broadcast-btn">Cancel</button>
