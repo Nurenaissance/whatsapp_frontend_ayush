@@ -122,7 +122,7 @@ const Register = () => {
 
   const createTenantID = async () => {
     const generateUniqueID = (length) => {
-      const characters = 'QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm'
+      const characters = 'qwertyuiopasdfghjklzxcvbnm'
       let result =''
       for (let i=0;i<length;i++){
         result += characters.charAt(Math.floor(Math.random() * characters.length));
