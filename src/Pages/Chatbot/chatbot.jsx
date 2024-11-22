@@ -223,7 +223,8 @@ const Chatbot = () => {
             </ul>
           </div>
         );
-      } else if (interactive.type === 'button') {
+      } 
+      else if (interactive.type === 'button') {
         return (
           <div className="interactive-message button-message">
             <p className="message-text">{interactive.body.text}</p>
@@ -233,6 +234,24 @@ const Chatbot = () => {
                   {button.reply.title}
                 </button>
               ))}
+            </div>
+          </div>
+        );
+      } 
+      else if (interactive.type === 'product') {
+        return (
+          <div className='interactive-message product-card'>
+            <div className='product-image'>
+              <img 
+                src={interactive.action.product_details.image_link} 
+                alt={interactive.action.product_details.title}
+                className='product-img'
+              />
+            </div>
+            <div className='product-info'>
+              <h3 className='product-title'>{interactive.action.product_details.title}</h3>
+              <p className='product-price'>Rs. {interactive.action.product_details.price}</p>
+              <p className='product-quantity'>In Stock: {interactive.action.product_details.quantity}</p>
             </div>
           </div>
         );
@@ -530,7 +549,7 @@ const Chatbot = () => {
         console.log('Got New Message', message.message);
         updateContactPriority(message.contactPhone, message.message);
         if (parseInt(message.contactPhone) == parseInt(selectedContact?.phone) && parseInt(message.phone_number_id) == parseInt(businessPhoneNumberId)) {
-          console.log("hogyaaaaaaaaaaaaaaaaaaaaaaaaaaaa");  
+          // console.log("hogyaaaaaaaaaaaaaaaaaaaaaaaaaaaa");  
           setConversation(prevMessages => [...prevMessages, { text: JSON.stringify(message.message), sender: 'user'}]);
           //setNewMessages(prevMessages => [...prevMessages, { text: message.message, sender: 'user'}]);
           } else {
@@ -550,7 +569,7 @@ const Chatbot = () => {
       console.log(selectedContact,"yahandekhhhhhh");
       if (message) {
           if (parseInt(message.contactPhone) == parseInt(selectedContact?.phone) && parseInt(message.phone_number_id) == parseInt(businessPhoneNumberId)) {
-            console.log("hogyaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+            // console.log("hogyaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
             setConversation(prevMessages => [...prevMessages, { text: JSON.stringify(message.message), sender: 'bot' }]);
           }
 
@@ -689,6 +708,27 @@ const Chatbot = () => {
           'X-Tenant-Id': tenantId
         },
       });
+
+      const msg = {
+        'type': 'interactive', 
+        'interactive': {
+          'type': 'button', 
+          'body': {
+            'text': 'Based on the text provided, the meals and food items mentioned are:\n\n1. Dhansaak\n2. Boondi Raita\n3. Chapati\n4. Lady Finger\n5. Apple\n6. Daliya Upma\n7. Banana\n8. Potato Chat\n9. Pomegranate\n10. Aloo sabji\n11. Poori\n12. Chana Dal\n13. Papad\n14. Rice\n15. Chutney\n16. Fruit Chat\n17. Mix Vegetable Oats\n18. Veg vermicelli\n19. Kadi Pakora\n20. Salad\n\nPlease let me know if you need more information.'
+          }, 
+          'action': {
+            'buttons': [
+              {
+                'type': 'reply', 
+                'reply': {
+                  'id': 'Exit AI', 
+                  'title': 'Exit'
+                }
+              }
+            ]
+          }
+        }
+      }
 
       if (!response.ok) {
         throw new Error('Failed to fetch data from backend');
@@ -1043,18 +1083,20 @@ const Chatbot = () => {
   )}
     <div className="cb-message-container">
   {conversation.map((message, index) => (
+
   <div
     key={index}
     className={`cb-message ${message.sender === 'user' ? 'cb-user-message' : 'cb-bot-message'}`}
   >
     {(() => {
+      console.log("Conversation and index: ", message, index)
     
       if (typeof message.text === 'string') {
         if (message.text.trim().startsWith('{') || message.text.trim().startsWith('[')) {
           try {
             const fixedMessage = fixJsonString(message.text);
             const parsedMessage = JSON.parse(fixedMessage);
-            // console.log('Parsed Message:', parsedMessage);
+            console.log('Parsed Message:', parsedMessage);
             return renderInteractiveMessage(parsedMessage);
           } catch (e) {
             const fixedMessage = fixJsonString(message.text);
@@ -1066,6 +1108,7 @@ const Chatbot = () => {
         }
         return message.text || <div className="error">Message content is undefined</div>;
       }else if (typeof message.text === 'object' && message.text !== null) {
+        console.log("Non-string msg: ")
         // Handle non-string message formats
         return renderMessageContent(message);
       }
