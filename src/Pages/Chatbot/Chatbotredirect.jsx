@@ -20,7 +20,7 @@ const Chatbotredirect = () => {
         if (code) {
           // Send the auth code to the backend
           const response = await axios.post(
-            `https://8twdg37p-8080.inc1.devtunnels.ms/login-flow`,
+            `https://8twdg37p-8080.inc1.devtunnels.ms/login-flow/${tenantID}`,
             { code },
             { headers: { 'X-Tenant-Id': tenantID } }
           );
