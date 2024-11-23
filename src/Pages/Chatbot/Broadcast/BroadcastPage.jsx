@@ -109,12 +109,12 @@ const BroadcastPage = () => {
               'X-Tenant-ID': tenantId
             }
           });
-          console.log("response: ", response.data.whatsapp_data)
+          console.log("response: ", response.data.whatsapp_data[0])
           console.log("bpid ac id at: ", response.data.whatsapp_data[0].access_token, response.data.whatsapp_data[0].business_phone_number_id, response.data.whatsapp_data[0].accountId)
           setBusinessPhoneNumberId(response.data.whatsapp_data[0].business_phone_number_id);
           setAccountId(response.data.whatsapp_data[0].business_account_id);
           setAccessToken(response.data.whatsapp_data[0].access_token)
-          return response.data.whatsapp_data;
+          return response.data.whatsapp_data[0];
         } catch (error) {
           console.error('Error fetching business phone ID:', error);
         }

@@ -49,6 +49,7 @@ export const AuthProvider = ({ children }) => {
   const [model, setModel] = useState(() => {
     try {
       const storedModel = localStorage.getItem("model");
+      // console.log("Stored model: ", storedModel)
       return storedModel ? JSON.parse(storedModel) : null;
     } catch (error) {
       console.error("Error parsing JSON from localStorage:", error);

@@ -364,7 +364,7 @@ const Chatbot = () => {
         // const business_phone_number_id = 241683569037594;
         console.log("bpiddddddd: ", businessPhoneNumberId)
         const response = await axiosInstance.get(`${fastURL}/whatsapp_tenant/`);
-        setAccessToken(response.data.whatsapp_data.access_token);
+        setAccessToken(response.data.whatsapp_data[0].access_token);
 
       } catch (error) {
         console.error('Error fetching tenant data:', error);
