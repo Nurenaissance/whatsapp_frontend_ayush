@@ -635,7 +635,7 @@ const BroadcastPage = () => {
   const formatBroadcastHistory = (groupedStatuses) => {
     return Object.entries(groupedStatuses).map(([broadcastGroup, statuses]) => ({
       id: broadcastGroup,
-      name: statuses.name || `Broadcast Group ${broadcastGroup}`,
+      name: statuses.name ? `${statuses.name}(G)` : statuses.template_name ||`Broadcast Group ${broadcastGroup}`,
       sent: statuses.sent,
       delivered: statuses.delivered,
       read: statuses.read,
@@ -1086,6 +1086,7 @@ const BroadcastPage = () => {
                 <div className="bp-form-group">
                   <label>Footer (Optional)</label>
                   <input
+                    maxLength={60}
                     type="text"
                     value={footerText}
                     onChange={(e) => setFooterText(e.target.value)}

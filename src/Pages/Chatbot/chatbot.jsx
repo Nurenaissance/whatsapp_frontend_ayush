@@ -272,6 +272,33 @@ const Chatbot = () => {
     return <p className="error-message">Unsupported message type</p>;
   };
 
+  const fixFailedJsonString = (jsonString) => {
+    try {
+      console.log("Failed Json String: ", jsonString)
+      // Replace single quotes with double quotes
+      const regex = /("(?:[^"\\]|\\.)*")|'/g;
+
+      // Replace single quotes with double quotes outside of double-quoted segments
+      let fixedString = jsonString.replace(regex, (match) => {
+          if (match.startsWith('"') && match.endsWith('"')) {
+              // If the segment is within double quotes, return it as is
+              console.log("Match: ", match)
+              return match.replace(/"/g, '\\"');
+          }
+          // Replace single quotes with double quotes
+          return match.replace(/'(?![^"]*")/g, '"');
+      });
+      console.log("Failed Pre Fixed String: ", fixedString)
+      // Ensure proper escape sequences
+      return fixedString;
+    } catch (e) {
+      console.error('Error fixing JSON string:', e);
+      return jsonString; // Return as-is if fixing fails
+    }
+  }
+
+  
+
   const fixJsonString = (jsonString) => {
     try {
       console.log("Json String: ", jsonString)
@@ -282,14 +309,18 @@ const Chatbot = () => {
       let fixedString = jsonString.replace(regex, (match) => {
           if (match.startsWith('"') && match.endsWith('"')) {
               // If the segment is within double quotes, return it as is
-              return match;
+              console.log("match: ", match)
+              if(match.includes("'")){
+                return match
+              }
+              else return match.replace(/"/g , '\\"');
           }
           // Replace single quotes with double quotes
           return match.replace(/'(?![^"]*")/g, '"');
       });
       console.log("Pre Fixed String: ", fixedString)
       // Ensure proper escape sequences
-      fixedString = fixedString.replace(/\\"/g, '\\\\"');
+      // fixedString = fixedString.replace(/\\"/g, '\\\\"');
       return fixedString;
     } catch (e) {
       console.error('Error fixing JSON string:', e);
@@ -1095,15 +1126,20 @@ const Chatbot = () => {
         if (message.text.trim().startsWith('{') || message.text.trim().startsWith('[')) {
           try {
             const fixedMessage = fixJsonString(message.text);
+            console.log("Fixed Message: ", fixedMessage)
             const parsedMessage = JSON.parse(fixedMessage);
             console.log('Parsed Message:', parsedMessage);
             return renderInteractiveMessage(parsedMessage);
           } catch (e) {
-            const fixedMessage = fixJsonString(message.text);
-            console.log("Fixed Message: ", fixedMessage)
-            const parsedMessage = JSON.parse(fixedMessage);
-            console.error(`Failed to parse JSON message: ${JSON.stringify(parsedMessage, null, 4)}`, e);
-            return <div className="error">Failed to parse message</div>;
+            // const fixedMessage = fixFailedJsonString(message.text);
+            // console.log("Fixed Message: ", fixedMessage)
+            // const parsedMessage = JSON.parse(fixedMessage);
+            // console.log("parsed failed message: ", parsedMessage)
+            // if (typeof parsedMessage === "object" && parsedMessage !== null) {
+            //   return renderInteractiveMessage(parsedMessage)
+            // } else {
+              return <div className="error">Failed to parse message</div>;
+            // }
           }
         }
         return message.text || <div className="error">Message content is undefined</div>;

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axiosInstance, { fastURL, djangoURL } from "../../api.jsx";
-import { UploadCloud, Download, FileText, Plus } from 'lucide-react';
+import { Download, FileText } from 'lucide-react';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import * as XLSX from 'xlsx';
