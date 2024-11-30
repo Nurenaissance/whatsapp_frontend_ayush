@@ -161,6 +161,169 @@ const Chatbot = () => {
   }, [tenantId]);
     
 
+<<<<<<< HEAD
+=======
+        case 'interactive':
+          // Replace `renderInteractiveMessage` with your logic to handle interactive messages
+          return renderInteractiveMessage(message.text.interactive) || <div className="error">Interactive message rendering failed</div>;
+
+          case 'template':
+          return renderTemplateMessage(message.text.template) || <div className="error">Template message rendering failed</div>;
+
+
+        default:
+          return <div className="error">Unknown message type: {message.text.type}</div>;
+      }
+    } else if (typeof message.text === 'string') {
+      // Fallback for plain text messages
+      return message.text || <div className="error">Message content is undefined</div>;
+    }
+
+    return <div className="error">Invalid message format</div>;
+  };
+
+  const renderTemplateMessage = (template) => {
+    if (!template || !template.name) {
+      return <div className="error">Invalid template message</div>;
+    }
+    return (
+      <div className="template-message">
+        <p>Template: {template.name}</p>
+      </div>
+    );
+  };
+
+  const renderInteractiveMessage = (parsedMessage) => {
+    const { type, interactive, text, image, template } = parsedMessage;
+    // console.log("Parsed Message: ", parsedMessage)
+    if (type === 'interactive') {
+      if (interactive.type === 'list') {
+        // console.log("interactive: ",interactive)
+        return (
+          <div className="interactive-message list-message">
+            <p className="message-text">{interactive.body.text}</p>
+            <ul className="message-list">
+              {interactive.action.sections.map((section, sectionIndex) => (
+                <li key={sectionIndex} className="list-section">
+                  {section.title && <h4 className="section-title">{section.title}</h4>}
+                  <ul>
+                    {section.rows.map((row) => (
+                      <li key={row.id} className="list-item">
+                        {row.title}
+                        {row.description && <p className="item-description">{row.description}</p>}
+                      </li>
+                    ))}
+                  </ul>
+                </li>
+              ))}
+            </ul>
+          </div>
+        );
+      } 
+      else if (interactive.type === 'button') {
+        return (
+          <div className="interactive-message button-message">
+            <p className="message-text">{interactive.body.text}</p>
+            <div className="message-buttons">
+              {interactive.action.buttons.map((button, buttonIndex) => (
+                <button key={buttonIndex} className="interactive-button">
+                  {button.reply.title}
+                </button>
+              ))}
+            </div>
+          </div>
+        );
+      } 
+      else if (interactive.type === 'product') {
+        return (
+          <div className='interactive-message product-card'>
+            <div className='product-image'>
+              <img 
+                src={interactive.action.product_details.image_link} 
+                alt={interactive.action.product_details.title}
+                className='product-img'
+              />
+            </div>
+            <div className='product-info'>
+              <h3 className='product-title'>{interactive.action.product_details.title}</h3>
+              <p className='product-price'>Rs. {interactive.action.product_details.price}</p>
+              <p className='product-quantity'>In Stock: {interactive.action.product_details.quantity}</p>
+            </div>
+          </div>
+        );
+      }
+    } else if (type === 'text') {
+      return <p className="plain-message">{text.body}</p>;
+    } else if (type === 'image') {
+      return (
+        <div className="image-message">
+          <img src={image.id} alt="Sent image" className="message-image" />
+          {image.caption && <p className="message-caption">{image.caption}</p>}
+        </div>
+      );
+    } else if (type === 'template') {
+      return renderTemplateMessage(template);
+    }
+
+    return <p className="error-message">Unsupported message type</p>;
+  };
+
+  const fixFailedJsonString = (jsonString) => {
+    try {
+      console.log("Failed Json String: ", jsonString)
+      // Replace single quotes with double quotes
+      const regex = /("(?:[^"\\]|\\.)*")|'/g;
+
+      // Replace single quotes with double quotes outside of double-quoted segments
+      let fixedString = jsonString.replace(regex, (match) => {
+          if (match.startsWith('"') && match.endsWith('"')) {
+              // If the segment is within double quotes, return it as is
+              console.log("Match: ", match)
+              return match.replace(/"/g, '\\"');
+          }
+          // Replace single quotes with double quotes
+          return match.replace(/'(?![^"]*")/g, '"');
+      });
+      console.log("Failed Pre Fixed String: ", fixedString)
+      // Ensure proper escape sequences
+      return fixedString;
+    } catch (e) {
+      console.error('Error fixing JSON string:', e);
+      return jsonString; // Return as-is if fixing fails
+    }
+  }
+
+  
+
+  const fixJsonString = (jsonString) => {
+    try {
+      console.log("Json String: ", jsonString)
+      // Replace single quotes with double quotes
+      const regex = /("(?:[^"\\]|\\.)*")|'/g;
+
+      // Replace single quotes with double quotes outside of double-quoted segments
+      let fixedString = jsonString.replace(regex, (match) => {
+          if (match.startsWith('"') && match.endsWith('"')) {
+              // If the segment is within double quotes, return it as is
+              console.log("match: ", match)
+              if(match.includes("'")){
+                return match
+              }
+              else return match.replace(/"/g , '\\"');
+          }
+          // Replace single quotes with double quotes
+          return match.replace(/'(?![^"]*")/g, '"');
+      });
+      console.log("Pre Fixed String: ", fixedString)
+      // Ensure proper escape sequences
+      // fixedString = fixedString.replace(/\\"/g, '\\\\"');
+      return fixedString;
+    } catch (e) {
+      console.error('Error fixing JSON string:', e);
+      return jsonString; // Return as-is if fixing fails
+    }
+  };
+>>>>>>> 7f436435a6bc388de154d3aba540ae88ae480b8c
 
 ``
   const fetchContacts = async () => {
@@ -382,7 +545,7 @@ const Chatbot = () => {
         console.log('Got New Message', message.message);
         updateContactPriority(message.contactPhone, message.message);
         if (parseInt(message.contactPhone) == parseInt(selectedContact?.phone) && parseInt(message.phone_number_id) == parseInt(businessPhoneNumberId)) {
-          console.log("hogyaaaaaaaaaaaaaaaaaaaaaaaaaaaa");  
+          // console.log("hogyaaaaaaaaaaaaaaaaaaaaaaaaaaaa");  
           setConversation(prevMessages => [...prevMessages, { text: JSON.stringify(message.message), sender: 'user'}]);
           //setNewMessages(prevMessages => [...prevMessages, { text: message.message, sender: 'user'}]);
           } else {
@@ -402,7 +565,7 @@ const Chatbot = () => {
       console.log(selectedContact,"yahandekhhhhhh");
       if (message) {
           if (parseInt(message.contactPhone) == parseInt(selectedContact?.phone) && parseInt(message.phone_number_id) == parseInt(businessPhoneNumberId)) {
-            console.log("hogyaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+            // console.log("hogyaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
             setConversation(prevMessages => [...prevMessages, { text: JSON.stringify(message.message), sender: 'bot' }]);
           }
 
@@ -539,6 +702,27 @@ const Chatbot = () => {
           'X-Tenant-Id': tenantId
         },
       });
+
+      const msg = {
+        'type': 'interactive', 
+        'interactive': {
+          'type': 'button', 
+          'body': {
+            'text': 'Based on the text provided, the meals and food items mentioned are:\n\n1. Dhansaak\n2. Boondi Raita\n3. Chapati\n4. Lady Finger\n5. Apple\n6. Daliya Upma\n7. Banana\n8. Potato Chat\n9. Pomegranate\n10. Aloo sabji\n11. Poori\n12. Chana Dal\n13. Papad\n14. Rice\n15. Chutney\n16. Fruit Chat\n17. Mix Vegetable Oats\n18. Veg vermicelli\n19. Kadi Pakora\n20. Salad\n\nPlease let me know if you need more information.'
+          }, 
+          'action': {
+            'buttons': [
+              {
+                'type': 'reply', 
+                'reply': {
+                  'id': 'Exit AI', 
+                  'title': 'Exit'
+                }
+              }
+            ]
+          }
+        }
+      }
 
       if (!response.ok) {
         throw new Error('Failed to fetch data from backend');
@@ -680,6 +864,17 @@ const Chatbot = () => {
     }
   };
     
+<<<<<<< HEAD
+=======
+  const handleRedirect = () => {
+    window.location.href = 'https://www.facebook.com/v18.0/dialog/oauth?client_id=1546607802575879&redirect_uri=https%3A%2F%2Fnuren.ai%2Fchatbotredirect%2F&response_type=code&config_id=1573657073196264&state=pass-through%20value';  
+  };
+
+  const handleCreateFlow = () => {
+    navigate(`/${tenantId}/flow-builder`); // Use navigate instead of history.push
+  };
+
+>>>>>>> 7f436435a6bc388de154d3aba540ae88ae480b8c
   const fetchFlows = async () => {
     try {
       const response = await axiosInstance.get(`${fastURL}/node-templates/`, {
@@ -926,29 +1121,37 @@ const Chatbot = () => {
   )}
     <div className="cb-message-container">
   {conversation.map((message, index) => (
+
   <div
     key={index}
     className={`cb-message ${message.sender === 'user' ? 'cb-user-message' : 'cb-bot-message'}`}
   >
     {(() => {
+      console.log("Conversation and index: ", message, index)
     
       if (typeof message.text === 'string') {
         if (message.text.trim().startsWith('{') || message.text.trim().startsWith('[')) {
           try {
             const fixedMessage = fixJsonString(message.text);
-            const parsedMessage = JSON.parse(fixedMessage);
-            // console.log('Parsed Message:', parsedMessage);
-            return renderInteractiveMessage(parsedMessage);
-          } catch (e) {
-            const fixedMessage = fixJsonString(message.text);
             console.log("Fixed Message: ", fixedMessage)
             const parsedMessage = JSON.parse(fixedMessage);
-            console.error(`Failed to parse JSON message: ${JSON.stringify(parsedMessage, null, 4)}`, e);
-            return <div className="error">Failed to parse message</div>;
+            console.log('Parsed Message:', parsedMessage);
+            return renderInteractiveMessage(parsedMessage);
+          } catch (e) {
+            // const fixedMessage = fixFailedJsonString(message.text);
+            // console.log("Fixed Message: ", fixedMessage)
+            // const parsedMessage = JSON.parse(fixedMessage);
+            // console.log("parsed failed message: ", parsedMessage)
+            // if (typeof parsedMessage === "object" && parsedMessage !== null) {
+            //   return renderInteractiveMessage(parsedMessage)
+            // } else {
+              return <div className="error">Failed to parse message</div>;
+            // }
           }
         }
         return message.text || <div className="error">Message content is undefined</div>;
       }else if (typeof message.text === 'object' && message.text !== null) {
+        console.log("Non-string msg: ")
         // Handle non-string message formats
         return renderMessageContent(message);
       }

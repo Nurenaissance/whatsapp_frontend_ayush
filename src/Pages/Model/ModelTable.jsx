@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axiosInstance, { fastURL, djangoURL } from "../../api.jsx";
-import { UploadCloud, Download, FileText, Plus } from 'lucide-react';
+import { Download, FileText } from 'lucide-react';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import * as XLSX from 'xlsx';
@@ -41,7 +41,7 @@ const Models = () => {
         setSelectedModel(model);
         setLoading(true);
         try {
-            const response = await axiosInstance.get(`${djangoURL}/dynamic-model-data/${model.model_name}/`);
+            const response = await axiosInstance.get(`${fastURL}/dynamic-models/${model.model_name}/`);
             setModelData(response.data);
         } catch (error) {
             console.error('Error fetching model data:', error);

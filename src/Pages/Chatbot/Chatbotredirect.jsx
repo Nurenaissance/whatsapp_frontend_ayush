@@ -15,19 +15,25 @@ const Chatbotredirect = () => {
         const urlParams = new URLSearchParams(window.location.search);
         const code = urlParams.get('code');
         console.log("Here is the code",code);
+        
+        const tenantID = JSON.parse(localStorage.getItem('tenant_id'));
         if (code) {
           // Send the auth code to the backend
           const response = await axios.post(
             `${whatsappURL}/login-flow/${tenantID}`,
+<<<<<<< HEAD
             { code },  // This is the body of the request
             { headers: { 'X-Tenant-Id': tenantID } }  // This is the headers object
+=======
+            { code },
+            { headers: { 'X-Tenant-Id': tenantID } }
+>>>>>>> 7f436435a6bc388de154d3aba540ae88ae480b8c
           );
 
           // Handle the response (you can save token or do other logic here)
           console.log('Backend response:', response.data);
 
-          // Get tenantID from local storage and redirect
-          const tenantID = JSON.parse(localStorage.getItem('tenant_id')); // Replace with your actual local storage key
+          // Get tenantID from local storage and redirect // Replace with your actual local storage key
 
           const timer = setInterval(() => {
             setProgress((prevProgress) => {

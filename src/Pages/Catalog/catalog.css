@@ -37,6 +37,21 @@
   transition: background-color 0.3s ease;
 }
 
+/* .bp-catalog{
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+} */
+
+.bp-catalog .submit-container {
+  position: relative;
+  right: 44%;
+  bottom: 85px;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+}
+
 .bp-catalog .submit-button {
   position: absolute;
   top: 95px;
@@ -44,7 +59,7 @@
   width: 90px;
   height: 45px;
   border-radius: 15px;
-  background-color: #4CAF50;
+  background-color: #10b981;
   color: white;
   border: none;
   font-size: 18px;
@@ -56,6 +71,8 @@
   transition: background-color 0.3s ease;
 }
 
+
+
 .bp-catalog .add-row-button {
   position: fixed;
   bottom: 20px;
@@ -63,7 +80,7 @@
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  background-color: #4CAF50;
+  background-color: #10b981;
   color: white;
   border: none;
   font-size: 24px;
@@ -76,7 +93,7 @@
 }
 
 .bp-catalog .add-row-button:hover {
-  background-color: #45a049;
+  background-color: #10b981;
 }
 
 .bp-catalog .btn {
@@ -101,4 +118,33 @@
 
 .bp-catalog .btn-delete:hover {
   background-color: rgba(255, 0, 0, 0.13);
+}
+.bp-catalog .copy-text-box {
+  background-color: #10b981; /* Tailwind's emerald-500 */
+  color: white; /* Button text color */
+  padding: 10px 20px; /* Adjust padding for a button look */
+  border: none; /* Remove default borders */
+  border-radius: 10px; /* Rounded borders */
+  font-size: 14px; /* Adjust text size */
+  font-weight: bold; /* Make the text bold */
+  cursor: pointer; /* Pointer cursor */
+  text-align: center; /* Center the text */
+  transition: background-color 0.3s ease; /* Smooth hover effect */
+}
+
+.bp-catalog .copy-text-box:hover {
+  background-color: #059669; /* Darker green on hover (Tailwind's emerald-600) */
+}
+
+
+.popup-enter {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.popup-exit {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease-in-out;
 }
